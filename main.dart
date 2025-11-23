@@ -132,3 +132,165 @@ class BottleDialog extends StatelessWidget {
     );
   }
 }
+
+[{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "uri_does_not_exist",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/uri_does_not_exist",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 8,
+	"message": "Target of URI doesn't exist: 'package:audioplayers/audioplayers.dart'.\nTry creating the file referenced by the URI, or try using a URI for a file that does exist.",
+	"source": "dart",
+	"startLineNumber": 3,
+	"startColumn": 8,
+	"endLineNumber": 3,
+	"endColumn": 48,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "undefined_method",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/undefined_method",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 8,
+	"message": "The method 'AudioPlayer' isn't defined for the type '_OceanScreenState'.\nTry correcting the name to the name of an existing method, or defining a method named 'AudioPlayer'.",
+	"source": "dart",
+	"startLineNumber": 25,
+	"startColumn": 18,
+	"endLineNumber": 25,
+	"endColumn": 29,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "undefined_method",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/undefined_method",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 8,
+	"message": "The method 'AssetSource' isn't defined for the type '_OceanScreenState'.\nTry correcting the name to the name of an existing method, or defining a method named 'AssetSource'.",
+	"source": "dart",
+	"startLineNumber": 56,
+	"startColumn": 23,
+	"endLineNumber": 56,
+	"endColumn": 34,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "use_key_in_widget_constructors",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/use_key_in_widget_constructors",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 2,
+	"message": "Constructors for public widgets should have a named 'key' parameter.\nTry adding a named parameter to the constructor.",
+	"source": "dart",
+	"startLineNumber": 9,
+	"startColumn": 7,
+	"endLineNumber": 9,
+	"endColumn": 20,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "use_key_in_widget_constructors",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/use_key_in_widget_constructors",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 2,
+	"message": "Constructors for public widgets should have a named 'key' parameter.\nTry adding a named parameter to the constructor.",
+	"source": "dart",
+	"startLineNumber": 16,
+	"startColumn": 7,
+	"endLineNumber": 16,
+	"endColumn": 18,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "library_private_types_in_public_api",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/library_private_types_in_public_api",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 2,
+	"message": "Invalid use of a private type in a public API.\nTry making the private type public, or making the API that uses the private type also be private.",
+	"source": "dart",
+	"startLineNumber": 18,
+	"startColumn": 3,
+	"endLineNumber": 18,
+	"endColumn": 20,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "unnecessary_to_list_in_spreads",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/unnecessary_to_list_in_spreads",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 2,
+	"message": "Unnecessary use of 'toList' in a spread.\nTry removing the invocation of 'toList'.",
+	"source": "dart",
+	"startLineNumber": 92,
+	"startColumn": 14,
+	"endLineNumber": 92,
+	"endColumn": 20,
+	"origin": "extHost1"
+},{
+	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
+	"owner": "_generated_diagnostic_collection_name_#0",
+	"code": {
+		"value": "use_key_in_widget_constructors",
+		"target": {
+			"$mid": 1,
+			"path": "/diagnostics/use_key_in_widget_constructors",
+			"scheme": "https",
+			"authority": "dart.dev"
+		}
+	},
+	"severity": 2,
+	"message": "Constructors for public widgets should have a named 'key' parameter.\nTry adding a named parameter to the constructor.",
+	"source": "dart",
+	"startLineNumber": 107,
+	"startColumn": 7,
+	"endLineNumber": 107,
+	"endColumn": 19,
+	"origin": "extHost1"
+}]
