@@ -1,296 +1,172 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
+import 'dart:math';
 
 void main() {
-  runApp(BottleTalkApp());
+  runApp(const BottleApp());
 }
 
-class BottleTalkApp extends StatelessWidget {
+class BottleApp extends StatelessWidget {
+  const BottleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'BottleTalk',
-      home: OceanScreen(),
+      debugShowCheckedModeBanner: false,
+      home: const BottleHomePage(),
     );
   }
 }
 
-class OceanScreen extends StatefulWidget {
+class BottleHomePage extends StatefulWidget {
+  const BottleHomePage({super.key});
+
   @override
-  _OceanScreenState createState() => _OceanScreenState();
+  State<BottleHomePage> createState() => _BottleHomePageState();
 }
 
-class _OceanScreenState extends State<OceanScreen>
+class _BottleHomePageState extends State<BottleHomePage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  List<Bottle> bottles = [];
-  final player = AudioPlayer();
+  late Animation<double> _floatAnimation;
+  late AudioPlayer bgmPlayer;
+  final clickPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
-    // 애니메이션 컨트롤러
+
+    // 배경음 플레이
+    bgmPlayer = AudioPlayer();
+    bgmPlayer.setReleaseMode(ReleaseMode.loop);
+    bgmPlayer.play(AssetSource('bgm.mp3')); // 배경음
+
+    // 유리병 둥실 애니메이션
     _controller = AnimationController(
+      duration: const Duration(seconds: 6),
       vsync: this,
-      duration: Duration(seconds: 5),
     )..repeat(reverse: true);
 
-    // 병 5개 생성 (랜덤 위치)
-    for (int i = 0; i < 5; i++) {
-      bottles.add(Bottle(
-        key: UniqueKey(),
-        x: Random().nextDouble(),
-        y: Random().nextDouble(),
-      ));
-    }
+    _floatAnimation = Tween<double>(begin: -15, end: 15)
+        .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
   void dispose() {
     _controller.dispose();
-    player.dispose();
+    bgmPlayer.dispose();
+    clickPlayer.dispose();
     super.dispose();
   }
 
   void playClickSound() async {
-    await player.play(AssetSource('click.mp3')); // assets 폴더에 click.mp3 필요
+    await clickPlayer.play(AssetSource('click.mp3'));
+  }
+
+  void _openBottle() {
+    playClickSound();
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LetterPage()),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final screen = MediaQuery.of(context).size;
+    final bottleSize = screen.width * 0.55;
+
     return Scaffold(
       body: Stack(
         children: [
-          // 바다 배경
-          Container(color: Colors.blue[300]),
-          ...bottles.map((b) {
-            return AnimatedBuilder(
+          Container(color: const Color(0xFFBEE3F8)), // 하늘색 배경
+
+          // 간단 구름/물결 느낌
+          AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              return Positioned(
+                top: 100 + sin(_controller.value * 2 * pi) * 20,
+                left: 50 + cos(_controller.value * 2 * pi) * 30,
+                child: Opacity(
+                  opacity: 0.15,
+                  child: Container(
+                    width: 120,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+
+          // 유리병
+          Center(
+            child: AnimatedBuilder(
               animation: _controller,
               builder: (context, child) {
-                double sine = sin(_controller.value * 2 * pi);
-                return Positioned(
-                  left: b.x * screenSize.width,
-                  top: (b.y * screenSize.height) + sine * 20,
-                  child: GestureDetector(
-                    onTap: () {
-                      playClickSound();
-                      showDialog(
-                        context: context,
-                        builder: (_) => BottleDialog(),
-                      );
-                    },
-                    child: Icon(Icons.local_drink,
-                        size: 50, color: Colors.brown),
+                double dx = sin(_controller.value * 2 * pi) * 20;
+                double dy = sin(_controller.value * 2 * pi) * 10;
+                return Transform.translate(
+                  offset: Offset(dx, dy),
+                  child: SizedBox(
+                    width: bottleSize,
+                    child: GestureDetector(
+                      onTap: _openBottle,
+                      child: Image.asset(
+                        'assets/유리병.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                   ),
                 );
               },
-            );
-          }).toList(),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class Bottle {
-  final Key key;
-  final double x;
-  final double y;
-  Bottle({required this.key, required this.x, required this.y});
-}
+class LetterPage extends StatelessWidget {
+  const LetterPage({super.key});
 
-// 메시지 읽기 / 답장 다이얼로그
-class BottleDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('병을 열었어요! 🌊'),
-      content: Text('누군가의 메시지가 여기에 있어요...'),
-      actions: [
-        TextButton(
-            onPressed: () => Navigator.pop(context), child: Text('그냥 흘려보내기')),
-        TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              // 답장하기 화면으로 이동 or 입력창
-              showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                        title: Text('답장 작성'),
-                        content: TextField(),
-                        actions: [
-                          TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text('보내기')),
-                        ],
-                      ));
-            },
-            child: Text('답장하기')),
-      ],
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFF8E1), // 편지지 배경
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFFECB3),
+        title: const Text("유리병 편지"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color(0xFFFFF3CD),
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black12,
+                offset: Offset(2, 2),
+                blurRadius: 6,
+              ),
+            ],
+          ),
+          child: const TextField(
+            maxLines: null,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: "당신의 고민을 적어보세요...",
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
-
-[{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "uri_does_not_exist",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/uri_does_not_exist",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 8,
-	"message": "Target of URI doesn't exist: 'package:audioplayers/audioplayers.dart'.\nTry creating the file referenced by the URI, or try using a URI for a file that does exist.",
-	"source": "dart",
-	"startLineNumber": 3,
-	"startColumn": 8,
-	"endLineNumber": 3,
-	"endColumn": 48,
-	"origin": "extHost1"
-},{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "undefined_method",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/undefined_method",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 8,
-	"message": "The method 'AudioPlayer' isn't defined for the type '_OceanScreenState'.\nTry correcting the name to the name of an existing method, or defining a method named 'AudioPlayer'.",
-	"source": "dart",
-	"startLineNumber": 25,
-	"startColumn": 18,
-	"endLineNumber": 25,
-	"endColumn": 29,
-	"origin": "extHost1"
-},{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "undefined_method",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/undefined_method",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 8,
-	"message": "The method 'AssetSource' isn't defined for the type '_OceanScreenState'.\nTry correcting the name to the name of an existing method, or defining a method named 'AssetSource'.",
-	"source": "dart",
-	"startLineNumber": 56,
-	"startColumn": 23,
-	"endLineNumber": 56,
-	"endColumn": 34,
-	"origin": "extHost1"
-},{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "use_key_in_widget_constructors",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/use_key_in_widget_constructors",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 2,
-	"message": "Constructors for public widgets should have a named 'key' parameter.\nTry adding a named parameter to the constructor.",
-	"source": "dart",
-	"startLineNumber": 9,
-	"startColumn": 7,
-	"endLineNumber": 9,
-	"endColumn": 20,
-	"origin": "extHost1"
-},{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "use_key_in_widget_constructors",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/use_key_in_widget_constructors",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 2,
-	"message": "Constructors for public widgets should have a named 'key' parameter.\nTry adding a named parameter to the constructor.",
-	"source": "dart",
-	"startLineNumber": 16,
-	"startColumn": 7,
-	"endLineNumber": 16,
-	"endColumn": 18,
-	"origin": "extHost1"
-},{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "library_private_types_in_public_api",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/library_private_types_in_public_api",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 2,
-	"message": "Invalid use of a private type in a public API.\nTry making the private type public, or making the API that uses the private type also be private.",
-	"source": "dart",
-	"startLineNumber": 18,
-	"startColumn": 3,
-	"endLineNumber": 18,
-	"endColumn": 20,
-	"origin": "extHost1"
-},{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "unnecessary_to_list_in_spreads",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/unnecessary_to_list_in_spreads",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 2,
-	"message": "Unnecessary use of 'toList' in a spread.\nTry removing the invocation of 'toList'.",
-	"source": "dart",
-	"startLineNumber": 92,
-	"startColumn": 14,
-	"endLineNumber": 92,
-	"endColumn": 20,
-	"origin": "extHost1"
-},{
-	"resource": "/c:/Users/김지율/Desktop/flutter 1/flutter_application_1/lib/main.dart",
-	"owner": "_generated_diagnostic_collection_name_#0",
-	"code": {
-		"value": "use_key_in_widget_constructors",
-		"target": {
-			"$mid": 1,
-			"path": "/diagnostics/use_key_in_widget_constructors",
-			"scheme": "https",
-			"authority": "dart.dev"
-		}
-	},
-	"severity": 2,
-	"message": "Constructors for public widgets should have a named 'key' parameter.\nTry adding a named parameter to the constructor.",
-	"source": "dart",
-	"startLineNumber": 107,
-	"startColumn": 7,
-	"endLineNumber": 107,
-	"endColumn": 19,
-	"origin": "extHost1"
-}]
